@@ -65,6 +65,10 @@ while ((userQuestion = Console.ReadLine())?.Length > 0)
             }
             break;
         }
+        else
+        {
+            Console.Write(".");
+        }
     }
 
     Console.WriteLine("Was möchtest du noch vergleichen?");
