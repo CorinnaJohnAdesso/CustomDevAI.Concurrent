@@ -1,4 +1,4 @@
-﻿namespace CustomDevUI.DevUI_Example;
+﻿namespace CustomDevAI.AgentWithDI;
 
 public sealed class AgentSettings
 {

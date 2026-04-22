@@ -1,14 +1,12 @@
 ﻿using Azure.AI.Projects;
 using Azure.Identity;
-using CustomDevAI.SimpleAgent.Configuration;
 using Microsoft.Agents.AI.Hosting;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-#pragma warning disable OPENAI001
-
-namespace CustomDevUI.DevUI_Example;
+namespace CustomDevAI.AgentWithDI;
 
 public static class Extensions
 {
@@ -36,7 +34,12 @@ public static class Extensions
             var agent = client.AsAIAgent(
                 settings.ModelDeployment,
                 settings.Instructions,
-                name);
+                name,
+                tools:
+                [
+                    AIFunctionFactory.Create(provider.GetRequiredService<WeatherToolService>().GetWeather),
+                    AIFunctionFactory.Create(provider.GetRequiredService<WeatherToolService>().GetTime),
+                ]);
             return agent;
         });
         return builder;
@@ -49,6 +52,7 @@ public static class Extensions
             .Bind(builder.Configuration.GetSection(AgentSettings.SectionName));
 
         builder.Services.AddSingleton(TimeProvider.System);
+        builder.Services.AddTransient<WeatherToolService>();
         return builder;
     }
 }

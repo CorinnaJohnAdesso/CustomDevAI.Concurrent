@@ -1,9 +1,8 @@
-﻿using CustomDevAI.SimpleAgent.Services;
+﻿using CustomDevAI.AgentWithDI;
 using Microsoft.Agents.AI.DevUI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CustomDevUI.DevUI_Example;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddAgents();
