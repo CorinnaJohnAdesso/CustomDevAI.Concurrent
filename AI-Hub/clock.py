@@ -2,7 +2,6 @@
 import datetime
 import json
 import os
-from time import strftime
 
 from dotenv import load_dotenv
 from openai import OpenAI
