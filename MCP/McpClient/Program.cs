@@ -32,7 +32,7 @@ using IChatClient samplingClient = openAIClient.AsIChatClient()
 var mcpClient = await McpClient.CreateAsync(
     new StdioClientTransport(new()
     {
-        Command = "C:\\Users\\cjohn\\OneDrive - adesso Group\\Dokumente\\AiBootcamp\\Demo\\Hannover-AI-Community\\OutlookMcpServer\\bin\\Debug\\net10.0\\win-x64\\OutlookMcpServer.exe",
+        Command = "C:\\Users\\cjohn\\OneDrive - adesso Group\\Dokumente\\AiBootcamp\\Demo\\Hannover-AI-Community\\MCP\\OutlookMcpServer\\bin\\Debug\\net10.0\\win-x64\\OutlookMcpServer.exe",
         Arguments = [],
         Name = "Outlook",
     }),
