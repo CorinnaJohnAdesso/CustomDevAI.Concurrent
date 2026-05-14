@@ -1,6 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using OutlookMcpServer;
+
+//var test = new OutlookCalendarTools(TimeProvider.System);
+//var result = test.GetCalendarAppointments("2026-05-15", "2026-05-20");
+//Console.WriteLine(result);
+//return;
 
 var builder = Host.CreateApplicationBuilder(args);
 

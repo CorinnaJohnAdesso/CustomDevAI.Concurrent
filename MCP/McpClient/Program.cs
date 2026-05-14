@@ -4,6 +4,7 @@ using ModelContextProtocol;
 using ModelContextProtocol.Client;
 using OpenAI;
 using System.ClientModel;
+using System.Diagnostics;
 
 #region Read settings
 var configuration = new ConfigurationBuilder()
@@ -83,6 +84,7 @@ while (true)
         else
         {
             Console.Write(".");
+            Debug.Write(update.Contents.FirstOrDefault()?.ToString());
         }
         
         await Console.Out.FlushAsync();
