@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomDevAI.Concurrent", "A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MCP", "MCP", "{EEDBB3CB-C8F2-4BAE-BDC4-5C785EAFAF51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutlookMcpServer", "OutlookMcpServer\OutlookMcpServer.csproj", "{48FD0B87-B848-4496-9B64-68907863BCC8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutlookMcpServer", "MCP\OutlookMcpServer\OutlookMcpServer.csproj", "{48FD0B87-B848-4496-9B64-68907863BCC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpClient", "McpClient\McpClient.csproj", "{54E5BCB1-C886-4D1D-BB53-94AFC7C3AC3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpClient", "MCP\McpClient\McpClient.csproj", "{54E5BCB1-C886-4D1D-BB53-94AFC7C3AC3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -15,6 +15,7 @@ var configuration = new ConfigurationBuilder()
 var endpoint = configuration["OpenAI:Endpoint"]!;
 var apiKey = configuration["OpenAI:ApiKey"]!;
 var model = configuration["OpenAI:Model"]!;
+var toolConfigs = configuration.GetSection("Tools").Get<ToolConfig[]>() ?? [];
 #endregion Read settings
 
 // Create OpenAI-compatible client against a custom endpoint
@@ -30,28 +31,9 @@ using IChatClient samplingClient = openAIClient.AsIChatClient()
     .AsBuilder()
     .Build();
 
-var mcpClient = await McpClient.CreateAsync(
-    new StdioClientTransport(new()
-    {
-        Command = "C:\\Users\\cjohn\\OneDrive - adesso Group\\Dokumente\\AiBootcamp\\Demo\\Hannover-AI-Community\\MCP\\OutlookMcpServer\\bin\\Debug\\net10.0\\win-x64\\OutlookMcpServer.exe",
-        Arguments = [],
-        Name = "Outlook",
-    }),
-    clientOptions: new()
-    {
-        Handlers = new()
-        {
-            SamplingHandler = samplingClient.CreateSamplingHandler()
-        }
-    });
-
-// Get all available tools
-Console.WriteLine("Tools available:");
-var tools = await mcpClient.ListToolsAsync();
-foreach (var tool in tools)
-{
-    Console.WriteLine($"  {tool}");
-}
+var tools = toolConfigs.SelectMany(
+    toolConfig => InitTool(samplingClient, toolConfig.Name, toolConfig.Command, toolConfig.Args).Result
+    ).ToList();
 
 #endregion Initialize MCP tools
 
@@ -72,7 +54,7 @@ while (true)
 
     var response = chatClient.GetStreamingResponseAsync(messages, new() { Tools = [.. tools] });
     List<ChatResponseUpdate> updates = [];
-    
+
     await foreach (var update in response)
     {
         var text = update.Text;
@@ -86,7 +68,7 @@ while (true)
             Console.Write(".");
             Debug.Write(update.Contents.FirstOrDefault()?.ToString());
         }
-        
+
         await Console.Out.FlushAsync();
     }
     Console.WriteLine();
@@ -94,4 +76,34 @@ while (true)
     messages.AddMessages(updates);
 }
 
+static async Task<IList<McpClientTool>> InitTool(IChatClient samplingClient, string name, string command, string[] arguments)
+{
+    var mcpClient = await McpClient.CreateAsync(
+        new StdioClientTransport(new()
+        {
+            Name = name,
+            Command = command,
+            Arguments = arguments,
+        }),
+        clientOptions: new()
+        {
+            Handlers = new()
+            {
+                SamplingHandler = samplingClient.CreateSamplingHandler()
+            }
+        });
+
+    // Get all available tools
+    Console.WriteLine("Tools available:");
+    var tools = await mcpClient.ListToolsAsync();
+    foreach (var tool in tools)
+    {
+        Console.WriteLine($"  {tool}");
+    }
+
+    return tools;
+}
+
 #endregion Process user questions
+
+record ToolConfig(string Name, string Command, string[] Args);
