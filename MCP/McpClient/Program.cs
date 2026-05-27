@@ -5,7 +5,6 @@ using ModelContextProtocol;
 using ModelContextProtocol.Client;
 using OpenAI;
 using System.ClientModel;
-using System.Diagnostics;
 
 #region Read settings
 var configuration = new ConfigurationBuilder()
@@ -54,6 +53,7 @@ messages.Add(new(ChatRole.System, "You are a personal assistant. If you need to 
 
 while (true)
 {
+    Console.ForegroundColor = ConsoleColor.White;
     Console.Write("Any questions about your own plans? ");
     messages.Add(new(ChatRole.User, Console.ReadLine()));
 
@@ -65,13 +65,47 @@ while (true)
         var text = update.Text;
         if (text?.Length > 0)
         {
+            Console.ForegroundColor = ConsoleColor.White;
             Console.Write(text);
+            
             updates.Add(update);
         }
         else
         {
-            Console.Write(".");
-            Debug.Write(update.Contents.FirstOrDefault()?.ToString());
+            var content = update.Contents.FirstOrDefault();
+         
+            if(content is UsageContent usageContent)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("Token count: {0}", usageContent.Details.TotalTokenCount);
+            }
+            else if (content is FunctionCallContent functionCallContent)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.WriteLine("Function call: {0}({1})", functionCallContent.Name, string.Join(", ", functionCallContent.Arguments?.Select(x => $"{x.Key}={x.Value}") ?? []));
+            }
+
+            else if (content is FunctionResultContent functionResult)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine("Function result: {0}", functionResult.Result);
+            }
+            else if (content is ToolCallContent toolCallContent)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.WriteLine("Tool call: {0}", toolCallContent);
+            }
+                
+            else if (content is ToolResultContent toolResult)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine("Tool result: {0}", toolResult);
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write(update.Contents.FirstOrDefault()?.ToString());
+            }
         }
 
         await Console.Out.FlushAsync();
@@ -101,6 +135,7 @@ static async Task<IList<McpClientTool>> InitTool(IChatClient samplingClient, str
     // Get all available tools
     var tools = await mcpClient.ListToolsAsync();
 
+    Console.ForegroundColor = ConsoleColor.White;
     Console.WriteLine("Tools available:");
     foreach (var tool in tools)
     {
