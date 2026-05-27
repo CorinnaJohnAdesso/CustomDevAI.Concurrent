@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.AI;
+﻿using Options;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using ModelContextProtocol;
 using ModelContextProtocol.Client;
@@ -15,7 +16,7 @@ var configuration = new ConfigurationBuilder()
 var endpoint = configuration["OpenAI:Endpoint"]!;
 var apiKey = configuration["OpenAI:ApiKey"]!;
 var model = configuration["OpenAI:Model"]!;
-var toolConfigs = configuration.GetSection("Tools").Get<ToolConfig[]>() ?? [];
+var toolConfigs = configuration.GetSection("Tools").Get<ToolInfo[]>() ?? [];
 #endregion Read settings
 
 // Create OpenAI-compatible client against a custom endpoint
@@ -47,6 +48,10 @@ using IChatClient chatClient = openAIClient.AsIChatClient()
 
 // Have a conversation, making all tools available to the LLM.
 List<ChatMessage> messages = [];
+
+// Add system prompt
+messages.Add(new(ChatRole.System, "You are a personal assistant. If you need to search the internet, use a new browser tab."));
+
 while (true)
 {
     Console.Write("Any questions about your own plans? ");
@@ -94,8 +99,9 @@ static async Task<IList<McpClientTool>> InitTool(IChatClient samplingClient, str
         });
 
     // Get all available tools
-    Console.WriteLine("Tools available:");
     var tools = await mcpClient.ListToolsAsync();
+
+    Console.WriteLine("Tools available:");
     foreach (var tool in tools)
     {
         Console.WriteLine($"  {tool}");
@@ -105,5 +111,3 @@ static async Task<IList<McpClientTool>> InitTool(IChatClient samplingClient, str
 }
 
 #endregion Process user questions
-
-record ToolConfig(string Name, string Command, string[] Args);
