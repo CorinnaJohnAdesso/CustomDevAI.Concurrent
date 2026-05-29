@@ -1,11 +1,17 @@
 import pandas as pd
 import pickle
 
+# open file, deserialize model
 with open('model.pkl', 'rb') as handle:
     restored_classifier = pickle.load(handle)
 
+# prepare personal data: remove everything except skills
 unknown_rows = pd.read_csv('unknown.csv')
-unknown_rows = unknown_rows.drop('name', axis=1)
+skills = unknown_rows.drop('name', axis=1)
 
-p = restored_classifier.predict(unknown_rows)
-print(p)
+# predict if the person gets a job
+p = restored_classifier.predict(skills)
+
+# display results
+result = unknown_rows.assign(prediction=p)
+print(result[['name', 'prediction']])
