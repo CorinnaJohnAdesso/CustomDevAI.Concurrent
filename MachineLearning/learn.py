@@ -8,11 +8,11 @@ import pickle
 data = pd.read_csv('it_jobs_automl_dataset.csv')
 
 # prepare personal data: remove everything except skills
-X = data.drop('got_job', axis=1)
-X = X.drop('name', axis=1)
+X = data.drop('Hired', axis=1)
+X = X.drop('Name', axis=1)
 
 # split off the classification column
-y = data['got_job']
+y = data['Hired']
 
 # split the table into training and test data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
